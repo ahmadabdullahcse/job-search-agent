@@ -1,0 +1,20 @@
+# Secrets & personal data — never commit
+.env
+private/*
+!private/.gitkeep
+
+# Generated output (contains personal application data)
+reports/*
+!reports/.gitkeep
+output/*
+!output/cover_letters/
+output/cover_letters/*
+!output/cover_letters/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+job-agent-env/
+*.egg-info/
+.playwright/
+.DS_Store
