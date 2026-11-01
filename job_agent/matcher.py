@@ -57,13 +57,13 @@ def evaluate_match(s: Settings, job: Job) -> MatchResult:
     missing = [sk for sk in job_skills if sk not in cv_skills]
 
     skill_score = len(matched) / len(job_skills) if job_skills else 0.5
-    title = job.title.lower()
-    keyword_words = {w for kw in s.keywords for w in kw.lower().split()}
-    title_score = (
-        len([w for w in keyword_words if w in title]) / len(keyword_words)
-        if keyword_words else 0.5
+    title = re.sub(r"[-/]", " ", job.title.lower())
+    # best-fitting keyword: share of its words found in the title
+    title_score = max(
+        (sum(w in title for w in kw.lower().split()) / len(kw.split()) for kw in s.keywords),
+        default=0.5,
     )
-    score = round(100 * (0.7 * skill_score + 0.3 * min(1.0, title_score * 2)))
+    score = round(100 * (0.7 * skill_score + 0.3 * title_score))
 
     instructions = ""
     m = COVER_LETTER_PATTERN.search(job.description)

@@ -14,11 +14,9 @@ def main() -> None:
 
     sub.add_parser("search", help="List matching jobs without applying")
 
-    run_p = sub.add_parser("run", help="Search, score, write cover letters and apply")
+    run_p = sub.add_parser("run", help="Search, score, write cover letters and fill forms for review")
     run_p.add_argument("--dry-run", action="store_true",
                        help="Score and write cover letters, but don't open any application")
-    run_p.add_argument("--auto-submit", action="store_true",
-                       help="Click submit without asking you to review (use with care)")
     run_p.add_argument("--always-cover-letter", action="store_true",
                        help="Write a cover letter even when the posting doesn't ask for one")
 
@@ -35,7 +33,7 @@ def main() -> None:
             print(f"{job.source:<10} {job.title} @ {job.company} | {job.location}\n           {job.url}")
     else:
         from .agent import run
-        run(settings, args.dry_run, args.auto_submit, args.always_cover_letter)
+        run(settings, args.dry_run, args.always_cover_letter)
 
 
 if __name__ == "__main__":

@@ -12,6 +12,10 @@ SKILLS = [
     "react", "next.js", "vue", "angular", "svelte", "node.js", "express.js", "nestjs",
     "django", "flask", "fastapi", "spring", "spring boot", ".net", "asp.net", "laravel",
     "rails", "flutter", "react native", "graphql", "rest api", "grpc", "tailwind",
+    # mobile
+    "ios", "android", "swiftui", "uikit", "xcode", "objective-c", "core data", "combine",
+    "firebase", "jetpack compose", "mvvm", "cocoapods", "swift package manager",
+    "rxswift", "alamofire", "realm", "app store", "testflight",
     # data / ml
     "pandas", "numpy", "scikit-learn", "pytorch", "tensorflow", "keras", "spark",
     "hadoop", "airflow", "dbt", "kafka", "machine learning", "deep learning", "nlp",
@@ -37,6 +41,9 @@ SKILLS = [
 # Other spellings that count as the same skill.
 ALIASES = {
     "postgresql": ["postgres"],
+    "swiftui": ["swift ui"],
+    "objective-c": ["objc", "objective c"],
+    "swift package manager": ["spm"],
     "golang": ["go lang"],
     "node.js": ["nodejs", "node js"],
     "express.js": ["expressjs"],

@@ -22,18 +22,20 @@ def load_rows() -> List[Dict[str, str]]:
 
 
 def processed_urls() -> Set[str]:
-    return {row["url"] for row in load_rows()}
+    """Jobs to skip on later runs. Dry-run shortlists stay open so you can apply later."""
+    return {row["url"] for row in load_rows() if row["status"] != "shortlisted"}
 
 
 def add_row(**fields: str) -> None:
+    """Append a row, or replace the existing row for the same job URL."""
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    is_new = not REPORT_PATH.exists()
-    row = {"date": datetime.now().strftime("%Y-%m-%d %H:%M"), **fields}
-    with REPORT_PATH.open("a", newline="", encoding="utf-8") as f:
+    new = {"date": datetime.now().strftime("%Y-%m-%d %H:%M"), **fields}
+    new = {c: new.get(c, "") for c in COLUMNS}
+    rows = [r for r in load_rows() if r["url"] != new["url"]] + [new]
+    with REPORT_PATH.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=COLUMNS, extrasaction="ignore")
-        if is_new:
-            writer.writeheader()
-        writer.writerow({c: row.get(c, "") for c in COLUMNS})
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def print_report() -> None:

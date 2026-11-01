@@ -24,6 +24,10 @@ def _int(value: Optional[str], default: int) -> int:
         return default
 
 
+def _list(value: Optional[str]) -> List[str]:
+    return [item.strip() for item in (value or "").split(",") if item.strip()]
+
+
 @dataclass
 class Profile:
     full_name: str
@@ -56,6 +60,7 @@ class Settings:
     keywords: List[str] = field(default_factory=list)
     location: str = ""
     remote_only: bool = False
+    home_locations: List[str] = field(default_factory=list)
     max_results_per_source: int = 25
     min_match_score: int = 70
     max_applications_per_run: int = 10
@@ -107,10 +112,11 @@ def load_settings() -> Settings:
         ),
         cv_path=cv_path,
         cv_text=cv_text,
-        extra_skills=[k.strip().lower() for k in (env("EXTRA_SKILLS") or "").split(",") if k.strip()],
-        keywords=[k.strip() for k in (env("JOB_KEYWORDS") or "").split(",") if k.strip()],
+        extra_skills=[k.lower() for k in _list(env("EXTRA_SKILLS"))],
+        keywords=_list(env("JOB_KEYWORDS")),
         location=env("JOB_LOCATION", ""),
         remote_only=_bool(env("REMOTE_ONLY")),
+        home_locations=_list(env("HOME_LOCATIONS")),
         max_results_per_source=_int(env("MAX_RESULTS_PER_SOURCE"), 25),
         min_match_score=_int(env("MIN_MATCH_SCORE"), 70),
         max_applications_per_run=_int(env("MAX_APPLICATIONS_PER_RUN"), 10),

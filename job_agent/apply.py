@@ -1,9 +1,9 @@
 """Fills application forms in a real browser with Playwright.
 
 Job sites differ wildly, so this is best-effort: it fills the common fields
-(name, email, phone, links, CV upload, cover letter) and, unless auto-submit is
-on, hands control to you to review and submit. Pages behind a login or CAPTCHA
-are logged as "needs_manual".
+(name, email, phone, links, CV upload, cover letter), then hands control to you.
+The agent never clicks submit: you review every application and submit it
+yourself. Pages behind a login or CAPTCHA are logged as "needs_manual".
 """
 from __future__ import annotations
 
@@ -27,7 +27,6 @@ FIELD_PATTERNS = {
     "notice_period": r"notice|start.?date|availability",
     "expected_salary": r"salary|compensation|gehalt",
 }
-SUBMIT_PATTERN = re.compile(r"submit|apply|send application|bewerben|absenden", re.I)
 BLOCKER_PATTERN = re.compile(r"captcha|sign in to apply|log in to apply|create an account", re.I)
 
 
@@ -78,7 +77,7 @@ def _fill_form(page, s: Settings, cover_letter: Optional[str]) -> int:
     return filled
 
 
-def apply_to_job(s: Settings, url: str, cover_letter: Optional[str], auto_submit: bool) -> tuple:
+def apply_to_job(s: Settings, url: str, cover_letter: Optional[str]) -> tuple:
     """Returns (status, notes). Status: applied | needs_review | needs_manual | skipped."""
     from playwright.sync_api import sync_playwright
 
@@ -103,14 +102,6 @@ def apply_to_job(s: Settings, url: str, cover_letter: Optional[str], auto_submit
             filled = _fill_form(page, s, cover_letter)
             if filled == 0:
                 return "needs_manual", "No application form detected"
-
-            if auto_submit:
-                submit = page.get_by_role("button", name=SUBMIT_PATTERN)
-                if not submit.count():
-                    return "needs_review", f"Filled {filled} fields; submit button not found"
-                submit.first.click()
-                page.wait_for_timeout(4000)
-                return "applied", f"Auto-submitted ({filled} fields)"
 
             answer = input(
                 f"    Filled {filled} fields. Review the browser, finish any extra questions "

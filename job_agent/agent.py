@@ -22,7 +22,7 @@ def _save_cover_letter(job: Job, text: str) -> str:
     return str(path.relative_to(COVER_LETTERS_DIR.parent.parent))
 
 
-def run(s: Settings, dry_run: bool, auto_submit: bool, always_cover_letter: bool) -> None:
+def run(s: Settings, dry_run: bool, always_cover_letter: bool) -> None:
     print(f"Searching for: {', '.join(s.keywords) or '(any)'} in {s.location or 'anywhere'}")
     jobs = search_jobs(s)
     done = report.processed_urls()
@@ -63,7 +63,7 @@ def run(s: Settings, dry_run: bool, auto_submit: bool, always_cover_letter: bool
             applied += 1
             continue
 
-        status, notes = apply_to_job(s, job.url, cover_letter, auto_submit)
+        status, notes = apply_to_job(s, job.url, cover_letter)
         print(f"    {status}: {notes}")
         report.add_row(**row, cover_letter=cl_path, status=status, notes=notes)
         if status == "applied":
